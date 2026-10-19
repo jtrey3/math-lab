@@ -110,6 +110,8 @@ main{padding-block:20px 48px}
 .grown p{margin:0;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:6px;font-weight:700}
 .vrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mute .spk{display:none!important}
+.mute .w{cursor:text}
 .chk{display:flex;gap:10px;align-items:flex-start;font-weight:700}
 .chk input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--accent)}
 .block{width:78px;height:78px;border-radius:16px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:44px;line-height:1}
@@ -207,7 +209,7 @@ main{padding-block:20px 48px}
     <div class="tag" id="tag">Quick facts · up to 20</div>
     <div id="prompt"></div>
     <div class="tools">
-      <button class="tool" id="speakBtn" type="button">Read it to me</button>
+      <button class="tool spk" id="speakBtn" type="button">Read it to me</button>
       <button class="tool" id="hintBtn" type="button">Show the dots</button>
       <button class="tool" id="stackBtn" type="button">Side by side</button>
     </div>
@@ -244,6 +246,7 @@ main{padding-block:20px 48px}
     <label class="field" for="nameInput">Child's name (used in story problems)
       <input id="nameInput" maxlength="20" autocomplete="off">
     </label>
+    <label class="chk" for="voiceChk"><input type="checkbox" id="voiceChk"> Voice: show "Read it to me" buttons (it only talks when tapped)</label>
     <div class="field" id="voiceField" hidden>
       <label for="voiceSel">Reading voice</label>
       <div class="vrow">
@@ -302,7 +305,7 @@ const store={
 };
 const dateKey=d=>d.toLocaleDateString('en-CA');
 const TODAY=dateKey(new Date());
-const S={name:store.get('name','Emily'),trouble:store.get('trouble',{}),stats:store.get('stats',{}),stacked:false,focus:store.get('focus','mixed'),dots:store.get('dots','on'),flash:store.get('flash',false)};
+const S={name:store.get('name','Emily'),trouble:store.get('trouble',{}),stats:store.get('stats',{}),stacked:false,focus:store.get('focus','mixed'),dots:store.get('dots','on'),flash:store.get('flash',false),voiceOn:store.get('voiceOn',false)};
 const FOCUS={mixed:'Mixed, up to 20',plus12:'+1 and +2',doubles:'Doubles',near:'Doubles + 1',ten:'Make 10',nine:'+9',minus12:'Take away 1 and 2'};
 function focusKey(){
   const f=S.focus,sw=(a,b)=>Math.random()<.5?`${a}+${b}`:`${b}+${a}`;
@@ -369,11 +372,11 @@ function loadVoices(){
 }
 function fillVoices(){
   const sel=document.getElementById('voiceSel');if(!sel)return;
-  document.getElementById('voiceField').hidden=!voices.length;
+  document.getElementById('voiceField').hidden=!voices.length||!S.voiceOn;
   sel.innerHTML=voices.map(v=>`<option value="${v.name.replace(/"/g,'&quot;')}">${vLabel(v)}</option>`).join('');
   if(voice)sel.value=voice.name;
 }
-function speak(t){if(!canSpeak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(voice){u.voice=voice;u.lang=voice.lang}else u.lang='en-US';u.rate=.9;u.pitch=1.05;speechSynthesis.speak(u)}catch(e){}}
+function speak(t){if(!canSpeak||!S.voiceOn)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(voice){u.voice=voice;u.lang=voice.lang}else u.lang='en-US';u.rate=.9;u.pitch=1.05;speechSynthesis.speak(u)}catch(e){}}
 if(canSpeak){loadVoices();try{speechSynthesis.addEventListener('voiceschanged',loadVoices)}catch(e){}}
 
 /* ---------- stats & spaced review ---------- */
@@ -501,7 +504,6 @@ function newProblem(){
   const hb=$('#hintBtn');hb.hidden=mode==='story';hb.textContent=mode==='facts'?'Show the dots':'How do I count?';
   setFeedback('');$('#nextBtn').hidden=true;
   padOn(phase==='solve');renderAnswer();
-  if(interacted&&mode==='story')speak(P.say);
 }
 function check(){
   if(done||phase!=='solve'||!input)return;
@@ -535,7 +537,7 @@ function renderGrown(){
   const d=S.stats[TODAY]||{facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}};
   const rows=[['Quick facts',d.facts],['Story problems',d.story],['Tens & ones',d.tens],['Reading questions',d.reading||{r:0,t:0}]];
   $('#todayStats').innerHTML=rows.map(([l,s])=>`<span>${l}</span><span>${s.r} of ${s.t} right first try</span>`).join('')+`<span>Facts known from memory (under 4 sec, no dots)</span><span>${d.fast||0}</span><span>Bedtime reading</span><span>${Math.floor((d.readSecs||0)/60)} min</span>`;
-  $('#focusSel').value=S.focus;$('#dotsSel').value=S.dots;$('#flashChk').checked=!!S.flash;
+  $('#voiceChk').checked=!!S.voiceOn;$('#focusSel').value=S.focus;$('#dotsSel').value=S.dots;$('#flashChk').checked=!!S.flash;
   const days=[];for(let i=6;i>=0;i--){const dt=new Date(Date.now()-i*DAY);const s=S.stats[dateKey(dt)];days.push({l:dt.toLocaleDateString('en-US',{weekday:'short'}),v:dayStars(s)})}
   const max=Math.max(1,...days.map(x=>x.v));
   $('#week').innerHTML=days.map(x=>`<div class="wk"><b>${x.v}</b><i style="height:${Math.round(x.v/max*80)}px"></i>${x.l}</div>`).join('');
@@ -595,7 +597,7 @@ function qBox(){
   const q=curQ(),s=RS[R.s];
   const nextLabel=R.stage==='main'?'Put the story in order →':R.page<s.pages.length-1?'Next page →':'Finish the story →';
   return`<div class="qbox"><span class="qtype">${q.k}</span><p class="ask">${q.ask}</p>
-  <div><button class="tool" data-act="hearq" type="button">Hear the question</button></div>
+  <div class="spk"><button class="tool" data-act="hearq" type="button">Hear the question</button></div>
   <div class="opts">${R.opts.map(i=>`<button class="opt${R.answered&&i===0?' right':''}${R.wrong.includes(i)?' no':''}" data-opt="${i}" type="button"${R.wrong.includes(i)||(R.answered&&i!==0)?' disabled':''}>${q.c[i]}</button>`).join('')}</div>
   ${fbHTML()}${R.answered?`<button class="next" data-act="next" type="button">${nextLabel}</button>`:''}</div>`;
 }
@@ -623,7 +625,7 @@ function renderRead(){
   let left='',right='';
   if(R.stage==='read'||R.stage==='q'){
     const p=s.pages[R.page];
-    left=`<span class="tag">Page ${R.page+1} of ${s.pages.length}</span><p class="page">${wordsHTML(p.t)}</p><div class="tools"><button class="tool" data-act="readpage" type="button">Read the page to me</button></div><p class="tiny">Stuck on a word? Tap it to hear it.</p>`;
+    left=`<span class="tag">Page ${R.page+1} of ${s.pages.length}</span><p class="page">${wordsHTML(p.t)}</p><div class="tools"><button class="tool spk" data-act="readpage" type="button">Read the page to me</button></div><p class="tiny spk">Stuck on a word? Tap it to hear it.</p>`;
     right=R.stage==='read'?`<div class="qbox"><p class="ask">Read this page out loud to your grown-up.</p><button class="next" data-act="didread" type="button">I read it →</button></div>`:qBox();
   }else if(R.stage==='main'){
     left=`<p class="page">You finished the story! Now think about the whole thing, from beginning to end.</p>`;right=qBox();
@@ -649,7 +651,7 @@ function answer(i){
   if(R.answered)return;
   if(i===0){
     R.answered=true;const first=!R.wrong.length;if(first)R.firstTry++;bump('reading',first);
-    R.fb={cls:'good',msg:pick(['Yes!','You got it!','Great thinking!','That is right!'])};speak(R.fb.msg);
+    R.fb={cls:'good',msg:pick(['Yes!','You got it!','Great thinking!','That is right!'])};
   }else{
     R.wrong.push(i);
     R.fb={cls:'oops',msg:R.stage==='main'?'Not quite. Think about the whole story, from start to finish.':'Not quite. Look back at the page and read it again.'};
@@ -667,13 +669,13 @@ function act(a){
   const s=R&&!R.bed?RS[R.s]:null;
   if(a==='home'){stopBed();R=null;renderRead();return}
   if(a==='readpage'){speak(s.pages[R.page].t);return}
-  if(a==='didread'){R.stage='q';setupQ();renderRead();speak(qSay());return}
+  if(a==='didread'){R.stage='q';setupQ();renderRead();return}
   if(a==='hearq'){speak(qSay());return}
   if(a==='next'){
-    if(R.stage==='q'){R.page++;if(R.page<s.pages.length)R.stage='read';else{R.stage='main';setupQ();renderRead();speak(qSay());return}}
+    if(R.stage==='q'){R.page++;if(R.page<s.pages.length)R.stage='read';else{R.stage='main';setupQ();renderRead();return}}
     else if(R.stage==='main'){R.stage='order';R.pick=[];R.fb=null;R.orderMiss=false;R.oopts=shuffle([0,1,2]);if(R.oopts.join()==='0,1,2')R.oopts=[2,0,1]}
     renderRead();window.scrollTo(0,0);return}
-  if(a==='finish'){R.stage='done';renderRead();speak(`Great reading, ${S.name}!`);return}
+  if(a==='finish'){R.stage='done';renderRead();return}
   if(a==='again'){startStory(R.s);return}
   if(a==='bed'){R={bed:true,secs:0,running:false,pages:0,q:null,end:false};renderRead();return}
   if(a==='timer'){if(R.running)stopBed();else{R.running=true;bedTimer=setInterval(tick,1000)}renderRead();return}
@@ -682,7 +684,7 @@ function act(a){
 }
 $('#readBody').addEventListener('click',e=>{
   const w=e.target.closest('.w');
-  if(w){const t=w.textContent.replace(/[^A-Za-z'’-]/g,'');if(t)speak(t);w.classList.add('say');setTimeout(()=>w.classList.remove('say'),700);return}
+  if(w&&S.voiceOn){const t=w.textContent.replace(/[^A-Za-z'’-]/g,'');if(t)speak(t);w.classList.add('say');setTimeout(()=>w.classList.remove('say'),700);return}
   const bk=e.target.closest('[data-story]');if(bk){startStory(+bk.dataset.story);return}
   const op=e.target.closest('[data-opt]');if(op){if(!op.disabled)answer(+op.dataset.opt);return}
   const ev=e.target.closest('[data-ev]');if(ev){orderPick(+ev.dataset.ev);return}
@@ -724,6 +726,7 @@ $('#visual').addEventListener('click',e=>{
   let sum=0;document.querySelectorAll('#visual .coin.counted').forEach(x=>sum+=+x.dataset.v);
   const tl=$('#tally');if(tl)tl.textContent=sum?`Counted so far: ${sum}¢`:'Tap coins to count them';
 });
+$('#voiceChk').addEventListener('change',e=>{S.voiceOn=e.target.checked;store.set('voiceOn',S.voiceOn);applyVoice();if(!S.voiceOn&&canSpeak)try{speechSynthesis.cancel()}catch(x){}});
 $('#focusSel').addEventListener('change',e=>{S.focus=e.target.value;store.set('focus',S.focus)});
 $('#dotsSel').addEventListener('change',e=>{S.dots=e.target.value;store.set('dots',S.dots)});
 $('#flashChk').addEventListener('change',e=>{S.flash=e.target.checked;store.set('flash',S.flash)});
@@ -742,6 +745,8 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Enter'){e.preventDefault();done?newProblem():check()}
 });
 
+function applyVoice(){document.body.classList.toggle('mute',!S.voiceOn);const vf=document.getElementById('voiceField');if(vf&&!S.voiceOn)vf.hidden=true;else fillVoices()}
+applyVoice();
 $('#kidName').textContent=S.name;stars();newProblem();
 })();
 </script>
