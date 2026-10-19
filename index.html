@@ -109,6 +109,12 @@ main{padding-block:20px 48px}
 .grown h2{font-family:var(--display);font-weight:800;font-size:24px;margin:0 0 8px}
 .grown p{margin:0;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:6px;font-weight:700}
+.vrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:700}
+.chk input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--accent)}
+.block{width:78px;height:78px;border-radius:16px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:44px;line-height:1}
+.field small{font-weight:400;color:var(--muted);font-size:14px;max-width:52ch}
+.field select{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);max-width:100%}
 .field input{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);max-width:260px}
 .stat{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-variant-numeric:tabular-nums}
 .stat span:nth-child(even){font-weight:700;text-align:right}
@@ -124,6 +130,42 @@ main{padding-block:20px 48px}
 .danger{border:2px solid var(--oops);color:var(--oops);background:none;border-radius:12px;padding:8px 14px;font-weight:700}
 .confirm{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .left,.right{display:flex;flex-direction:column;gap:16px;min-width:0}
+/* Reading */
+.rbody{display:flex;flex-direction:column;gap:18px}
+.rsec{display:flex;flex-direction:column;gap:10px}
+.rh{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.2;margin:0}
+.rsub{margin:0;color:var(--muted)}
+.rtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.rgrid{display:flex;flex-direction:column;gap:18px}
+.rleft,.rright{display:flex;flex-direction:column;gap:12px;min-width:0}
+.page{font-size:clamp(22px,3vw,30px);line-height:1.75;margin:0;max-width:34ch}
+.w{cursor:pointer;border-radius:6px;padding:0 1px;transition:background .15s}
+.w.say{background:var(--sun);color:var(--sun-ink)}
+.tiny{margin:0;font-size:14px;color:var(--muted)}
+.ask{margin:0;font-size:21px;font-weight:700;line-height:1.4}
+.qbox{display:flex;flex-direction:column;gap:12px}
+.qtype{align-self:flex-start;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 12px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{border:2px solid var(--accent);background:var(--surface);color:var(--ink);border-radius:16px;padding:12px 16px;font-size:20px;text-align:left;min-height:58px}
+.opt:disabled{opacity:.4;cursor:default}
+.opt.no{text-decoration:line-through;border-color:var(--oops)}
+.opt.right{background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:700}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.book{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.bk-e{font-size:40px;line-height:1}
+.bk-t{font-weight:700;font-size:18px;line-height:1.25}
+.book small{color:var(--muted)}
+.slots{display:grid;gap:8px}
+.slot{display:grid;grid-template-columns:100px minmax(0,1fr);gap:10px;align-items:center;border:2px dashed var(--line);border-radius:14px;padding:10px 14px;min-height:56px;font-size:18px}
+.slot b{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.slot.filled{border-style:solid;border-color:var(--good);background:var(--good-bg)}
+.timer{font-family:var(--display);font-weight:800;font-size:68px;line-height:1;font-variant-numeric:tabular-nums;text-align:center}
+.prog{height:12px;border-radius:999px;background:var(--bg);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--good);transition:width .5s}
+.pcard{border:2px solid var(--accent);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.pcard p{margin:0;font-size:21px;font-weight:700;line-height:1.4}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .opt{text-align:center;font-size:17px}
 /* Landscape tablet: problem on the left, keypad on the right, so nothing needs scrolling */
 @media (orientation: landscape) and (min-width: 700px){
   .wrap{max-width:1080px}
@@ -136,6 +178,8 @@ main{padding-block:20px 48px}
   .eq{font-size:clamp(40px,11vh,80px)}
   .story{font-size:21px;max-width:40ch}
   .bar{padding-block:8px 2px}
+  #read{padding:16px 22px}
+  .rgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:start}
   .tab{padding:8px 12px}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important}.key:active{transform:none}}
@@ -151,6 +195,7 @@ main{padding-block:20px 48px}
       <button class="tab" role="tab" data-mode="facts" aria-selected="true">Quick facts</button>
       <button class="tab" role="tab" data-mode="story" aria-selected="false">Story problems</button>
       <button class="tab" role="tab" data-mode="tens" aria-selected="false">Tens &amp; ones</button>
+      <button class="tab" role="tab" data-mode="read" aria-selected="false">Reading</button>
       <button class="tab" role="tab" data-mode="grown" aria-selected="false">Grown-ups</button>
     </nav>
   </div>
@@ -187,6 +232,10 @@ main{padding-block:20px 48px}
    </div>
   </section>
 
+  <section class="card" id="read" hidden>
+    <div id="readBody" class="rbody"></div>
+  </section>
+
   <section class="card grown" id="grown" hidden>
     <div>
       <h2>For grown-ups</h2>
@@ -195,6 +244,35 @@ main{padding-block:20px 48px}
     <label class="field" for="nameInput">Child's name (used in story problems)
       <input id="nameInput" maxlength="20" autocomplete="off">
     </label>
+    <div class="field" id="voiceField" hidden>
+      <label for="voiceSel">Reading voice</label>
+      <div class="vrow">
+        <select id="voiceSel"></select>
+        <button class="tool" id="voiceTest" type="button">Test voice</button>
+      </div>
+      <small>For a voice that sounds like a real person, download a Premium voice on the iPad: Settings → Accessibility → Read &amp; Speak (or Spoken Content) → Voices → English → Ava or Zoe (Premium). Then close and reopen this app.</small>
+    </div>
+    <div class="field">
+      <label for="focusSel">Practice focus for Quick facts</label>
+      <select id="focusSel">
+        <option value="mixed">Mixed, up to 20</option>
+        <option value="plus12">Step 1: +1 and +2</option>
+        <option value="doubles">Step 2: Doubles (4 + 4)</option>
+        <option value="near">Step 3: Doubles + 1 (4 + 5)</option>
+        <option value="ten">Step 4: Make 10 (7 + 3)</option>
+        <option value="nine">Step 5: +9</option>
+        <option value="minus12">Take away 1 and 2</option>
+      </select>
+      <small>Spend about a week on one step. Move on when most answers come in under 4 seconds without the dots.</small>
+    </div>
+    <div class="field">
+      <label for="dotsSel">Dot help</label>
+      <select id="dotsSel">
+        <option value="on">Count on: first number shown as a block (recommended)</option>
+        <option value="all">Show every dot</option>
+      </select>
+    </div>
+    <label class="chk" for="flashChk"><input type="checkbox" id="flashChk"> Flash the dots for 3 seconds, then hide them so she pictures them</label>
     <div>
       <h2>Today</h2>
       <div class="stat" id="todayStats"></div>
@@ -224,7 +302,35 @@ const store={
 };
 const dateKey=d=>d.toLocaleDateString('en-CA');
 const TODAY=dateKey(new Date());
-const S={name:store.get('name','Emily'),trouble:store.get('trouble',{}),stats:store.get('stats',{}),stacked:false};
+const S={name:store.get('name','Emily'),trouble:store.get('trouble',{}),stats:store.get('stats',{}),stacked:false,focus:store.get('focus','mixed'),dots:store.get('dots','on'),flash:store.get('flash',false)};
+const FOCUS={mixed:'Mixed, up to 20',plus12:'+1 and +2',doubles:'Doubles',near:'Doubles + 1',ten:'Make 10',nine:'+9',minus12:'Take away 1 and 2'};
+function focusKey(){
+  const f=S.focus,sw=(a,b)=>Math.random()<.5?`${a}+${b}`:`${b}+${a}`;
+  if(f==='plus12'){const b=Math.random()<.5?1:2;return sw(1+Math.floor(Math.random()*(20-b)),b)}
+  if(f==='doubles'){const a=1+Math.floor(Math.random()*10);return`${a}+${a}`}
+  if(f==='near'){const a=1+Math.floor(Math.random()*9);return sw(a,a+1)}
+  if(f==='ten'){const a=1+Math.floor(Math.random()*9);return`${a}+${10-a}`}
+  if(f==='nine')return sw(9,1+Math.floor(Math.random()*9));
+  if(f==='minus12'){const b=Math.random()<.5?1:2;return`${b+1+Math.floor(Math.random()*(20-b))}-${b}`}
+  return null;
+}
+function tipFor(a,op,b){
+  if(op==='-'){
+    if(b===0)return'Take away 0 and nothing changes.';
+    if(b<=2)return`Count back ${b} from ${a}.`;
+    if(a-b===b)return`${b} + ${b} = ${a}, so ${a} − ${b} = ${b}.`;
+    return`Think addition: ${b} + what makes ${a}?`;
+  }
+  const big=Math.max(a,b),small=Math.min(a,b),s=a+b;
+  if(small===0)return'Plus 0 stays the same.';
+  if(a===b)return`${a} + ${a} is a double. Doubles are easy to remember!`;
+  if(big-small===1)return`Double plus 1: ${small} + ${small} = ${small*2}, and 1 more is ${s}.`;
+  if(s===10)return`${a} and ${b} are partners that make 10.`;
+  if(big===9)return`Make it 10: 10 + ${small} = ${10+small}, then 1 less is ${s}.`;
+  if(big===8&&small>2)return`Make 10: 8 + 2 = 10, then ${small-2} more is ${s}.`;
+  return`Start at ${big} and count on ${small}.`;
+}
+let flashT=null;
 function eqHTML(p){
   if(!S.stacked)return p.html;
   const d=n=>n>=10?[String(Math.floor(n/10)),String(n%10)]:['',String(n)];
@@ -244,12 +350,37 @@ const word=op=>op==='+'?'plus':'minus';
 /* ---------- speech ---------- */
 const canSpeak='speechSynthesis' in window;
 if(!canSpeak) $('#speakBtn').hidden=true;
-function speak(t){if(!canSpeak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+let voices=[],voice=null;
+function vScore(v){
+  let s=0;const n=v.name;
+  if(/premium/i.test(n))s+=6;else if(/enhanced|neural|natural/i.test(n))s+=4;
+  if(/^(Ava|Zoe|Samantha|Allison|Susan|Evan|Nathan|Joelle|Noelle|Serena|Karen|Moira|Tessa|Google US English|Microsoft (Aria|Jenny))/i.test(n))s+=2;
+  if(/en[-_]US/i.test(v.lang))s+=1;
+  if(/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Ralph|Kathy|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley/i.test(n))s-=10;
+  return s;
+}
+function vLabel(v){const q=/premium/i.test(v.name)?' · most natural':/enhanced|neural|natural/i.test(v.name)?' · natural':'';return v.name.replace(/\s*\((Premium|Enhanced)\)/i,'')+q}
+function loadVoices(){
+  if(!canSpeak)return;
+  try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)).sort((a,b)=>vScore(b)-vScore(a))}catch(e){voices=[]}
+  const saved=store.get('voice','');
+  voice=voices.find(v=>v.name===saved)||voices[0]||null;
+  fillVoices();
+}
+function fillVoices(){
+  const sel=document.getElementById('voiceSel');if(!sel)return;
+  document.getElementById('voiceField').hidden=!voices.length;
+  sel.innerHTML=voices.map(v=>`<option value="${v.name.replace(/"/g,'&quot;')}">${vLabel(v)}</option>`).join('');
+  if(voice)sel.value=voice.name;
+}
+function speak(t){if(!canSpeak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(voice){u.voice=voice;u.lang=voice.lang}else u.lang='en-US';u.rate=.9;u.pitch=1.05;speechSynthesis.speak(u)}catch(e){}}
+if(canSpeak){loadVoices();try{speechSynthesis.addEventListener('voiceschanged',loadVoices)}catch(e){}}
 
 /* ---------- stats & spaced review ---------- */
-function day(){return S.stats[TODAY]||(S.stats[TODAY]={facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}})}
+function day(){const d=S.stats[TODAY]||(S.stats[TODAY]={facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}});if(!d.reading)d.reading={r:0,t:0};if(!d.readSecs)d.readSecs=0;return d}
 function bump(kind,right){const d=day();d[kind].t++;if(right)d[kind].r++;store.set('stats',S.stats);stars()}
-function stars(){const d=S.stats[TODAY];$('#starCount').textContent=d?d.facts.r+d.story.r+d.tens.r:0}
+const dayStars=d=>d?d.facts.r+d.story.r+d.tens.r+(d.reading?d.reading.r:0):0;
+function stars(){$('#starCount').textContent=dayStars(S.stats[TODAY])}
 function markMiss(key){
   S.trouble[key]={box:0,due:Date.now()+10*60000};store.set('trouble',S.trouble);
   if(!sessionQ.some(q=>q.key===key))sessionQ.push({key,at:count+3});
@@ -268,15 +399,17 @@ function makeFact(){
   if(qi>=0)key=sessionQ.splice(qi,1)[0].key;
   else{
     const due=Object.keys(S.trouble).filter(k=>S.trouble[k].due<=Date.now());
+    const fk=focusKey();
     if(due.length&&Math.random()<.4)key=pick(due);
+    else if(fk)key=fk;
     else if(Math.random()<.5){const a=rand(1,12);key=`${a}+${rand(0,Math.min(10,20-a))}`}
     else{const a=rand(2,20);key=`${a}-${rand(0,Math.min(10,a))}`}
   }
   const f=fromKey(key);
-  return{kind:'facts',key,...f,eq:true,tag:'Quick facts · up to 20',
+  return{kind:'facts',key,...f,eq:true,tag:'Quick facts · '+FOCUS[S.focus],
     html:`<div class="eq"><span>${f.a}</span><span>${sym(f.op)}</span><span>${f.b}</span><span>=</span><span class="answer" id="answer"></span></div>`,
     full:`${f.a} ${sym(f.op)} ${f.b} = ${f.ans}`,say:`${f.a} ${word(f.op)} ${f.b}`,
-    hint:'Not yet. Count the dots, then try again.'};
+    hint:f.op==='+'?`Not yet. Say ${Math.max(f.a,f.b)} in your head, then count on ${Math.min(f.a,f.b)} more.`:'Not yet. Count the dots that are left, then try again.'};
 }
 const THINGS=[{n:'stickers',e:'⭐'},{n:'crayons',e:'🖍️'},{n:'apples',e:'🍎'},{n:'marbles',e:'🔵'},{n:'toy cars',e:'🚗'}];
 const STORIES=[
@@ -319,7 +452,11 @@ function frames(cells){
   return h||'<div class="frame">'+'<span class="cell"></span>'.repeat(10)+'</div>';
 }
 function factVisual(p){
-  if(p.op==='+')return`<div class="cgroup">${frames(Array(p.a).fill('a'))}<small>${p.a}</small></div><span class="plus">+</span><div class="cgroup">${frames(Array(p.b).fill('b'))}<small>${p.b}</small></div>`;
+  if(p.op==='+'&&S.dots==='all')return`<div class="cgroup">${frames(Array(p.a).fill('a'))}<small>${p.a}</small></div><span class="plus">+</span><div class="cgroup">${frames(Array(p.b).fill('b'))}<small>${p.b}</small></div>`;
+  if(p.op==='+'){
+    const big=Math.max(p.a,p.b),small=Math.min(p.a,p.b);
+    return`<div class="cgroup"><div class="block">${big}</div><small>Start here</small></div><span class="plus">+</span><div class="cgroup">${frames(Array(small).fill('b'))}<small>Count on ${small}</small></div><div class="tally" style="color:var(--muted)">Say ${big} in your head. Then count the yellow dots.</div>`;
+  }
   return`<div class="cgroup">${frames([...Array(p.a-p.b).fill('a'),...Array(p.b).fill('x')])}<small>Start with ${p.a}. Take away the ${p.b} red X's.</small></div>`;
 }
 function storyVisual(p){
@@ -343,10 +480,16 @@ function showVisual(){
   const v=$('#visual');
   v.innerHTML=P.kind==='facts'?factVisual(P):P.kind==='story'?storyVisual(P):tensVisual(P);
   v.hidden=false;
+  if(P.kind==='facts'){
+    P.sawDots=true;clearTimeout(flashT);
+    if(S.flash){flashT=setTimeout(()=>{v.hidden=true;$('#hintBtn').textContent='Show the dots again'},3000)}
+  }
 }
 function newProblem(){
   input='';tries=0;done=false;count++;
+  clearTimeout(flashT);
   P=mode==='facts'?makeFact():mode==='story'?makeStory():makeTens();
+  P.t0=Date.now();
   phase=mode==='story'?'choose':'solve';
   $('#tag').textContent=P.tag;
   $('#prompt').innerHTML=P.eq?eqHTML(P):P.html;
@@ -364,12 +507,15 @@ function check(){
   if(done||phase!=='solve'||!input)return;
   if(+input===P.ans){
     done=true;const first=tries===0;
-    setFeedback(pick(['Yes!','You got it!','Nice thinking!','That is right!','Great job!'])+'  '+P.full,'good');
+    const fast=P.kind==='facts'&&first&&!P.sawDots&&Date.now()-P.t0<4000;
+    if(fast){const d=day();d.fast=(d.fast||0)+1}
+    const tip=P.kind==='facts'?' '+tipFor(P.a,P.op,P.b):'';
+    setFeedback((fast?'⚡ Super fast! ':pick(['Yes! ','You got it! ','Nice thinking! ','That is right! ','Great job! ']))+P.full+'.'+tip,'good');
     finish(first);
   }else{
     tries++;if(P.key)markMiss(P.key);
     if(tries===1){setFeedback(P.hint,'oops');showVisual();input='';renderAnswer()}
-    else{done=true;input=String(P.ans);renderAnswer();setFeedback(`The answer is ${P.full}. We will practice this one again soon.`,'oops');finish(false)}
+    else{done=true;input=String(P.ans);renderAnswer();setFeedback(`The answer is ${P.full}.${P.kind==='facts'?' '+tipFor(P.a,P.op,P.b):''} We will practice this one again soon.`,'oops');finish(false)}
   }
 }
 function finish(first){
@@ -385,11 +531,12 @@ function press(k){
 
 /* ---------- grown-ups ---------- */
 function renderGrown(){
-  $('#nameInput').value=S.name;
+  $('#nameInput').value=S.name;loadVoices();
   const d=S.stats[TODAY]||{facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}};
-  const rows=[['Quick facts',d.facts],['Story problems',d.story],['Tens & ones',d.tens]];
-  $('#todayStats').innerHTML=rows.map(([l,s])=>`<span>${l}</span><span>${s.r} of ${s.t} right first try</span>`).join('');
-  const days=[];for(let i=6;i>=0;i--){const dt=new Date(Date.now()-i*DAY);const s=S.stats[dateKey(dt)];days.push({l:dt.toLocaleDateString('en-US',{weekday:'short'}),v:s?s.facts.r+s.story.r+s.tens.r:0})}
+  const rows=[['Quick facts',d.facts],['Story problems',d.story],['Tens & ones',d.tens],['Reading questions',d.reading||{r:0,t:0}]];
+  $('#todayStats').innerHTML=rows.map(([l,s])=>`<span>${l}</span><span>${s.r} of ${s.t} right first try</span>`).join('')+`<span>Facts known from memory (under 4 sec, no dots)</span><span>${d.fast||0}</span><span>Bedtime reading</span><span>${Math.floor((d.readSecs||0)/60)} min</span>`;
+  $('#focusSel').value=S.focus;$('#dotsSel').value=S.dots;$('#flashChk').checked=!!S.flash;
+  const days=[];for(let i=6;i>=0;i--){const dt=new Date(Date.now()-i*DAY);const s=S.stats[dateKey(dt)];days.push({l:dt.toLocaleDateString('en-US',{weekday:'short'}),v:dayStars(s)})}
   const max=Math.max(1,...days.map(x=>x.v));
   $('#week').innerHTML=days.map(x=>`<div class="wk"><b>${x.v}</b><i style="height:${Math.round(x.v/max*80)}px"></i>${x.l}</div>`).join('');
   const keys=Object.keys(S.trouble);
@@ -404,13 +551,153 @@ function resetArea(confirming){
   r.innerHTML=confirming?'<span>Erase all saved progress?</span><button class="danger" id="yesReset" type="button">Yes, erase</button><button class="tool" id="noReset" type="button">Cancel</button>':'<button class="danger" id="resetBtn" type="button">Reset all progress</button>';
 }
 
+/* ---------- reading ---------- */
+const RS=[
+ {title:`Max and the Lost Kite`,e:'🪁',pages:[
+  {t:`Max had a red kite. He took it to the park with his dog, Pip. The wind was strong that day.`,q:{k:'Who',ask:`Who went to the park with Max?`,c:[`His dog, Pip`,`His mom`,`His teacher`]}},
+  {t:`Max ran fast, and the kite went up high. Then the wind pulled very hard. The string slipped out of Max's hand!`,q:{k:'What happened',ask:`What happened to the kite string?`,c:[`It slipped out of Max's hand`,`Max cut it`,`Pip chewed it`]}},
+  {t:`The kite flew over the trees. Max felt sad. Pip barked and ran toward the trees.`,q:{k:'Feelings',ask:`How did Max feel when the kite flew away?`,c:[`Sad`,`Happy`,`Sleepy`]}},
+  {t:`Pip found the kite stuck in a small bush. Max hugged Pip. "You are the best dog!" he said.`,q:{k:'Why',ask:`Why did Max hug Pip?`,c:[`Pip found the kite`,`Pip was cold`,`Pip was lost`]}}],
+  main:{ask:`What is this story mostly about?`,c:[`A dog helps a boy find his lost kite`,`A boy buys a new kite`,`A dog plays in the rain`]},
+  order:[`Max took his kite to the park.`,`The wind pulled the kite away.`,`Pip found the kite in a bush.`]},
+ {title:`Lily's Garden`,e:'🌻',pages:[
+  {t:`Lily planted three seeds in a pot. She put the pot by the window so it could get sun.`,q:{k:'Where',ask:`Where did Lily put the pot?`,c:[`By the window`,`Under her bed`,`In the car`]}},
+  {t:`Every morning, Lily gave the seeds a little water. For many days, nothing happened.`,q:{k:'Detail',ask:`What did Lily do every morning?`,c:[`Gave the seeds water`,`Went swimming`,`Painted the pot`]}},
+  {t:`One day, Lily saw a tiny green sprout. She ran to tell her grandma.`,q:{k:'Who',ask:`Who did Lily run to tell?`,c:[`Her grandma`,`Her teacher`,`Her cat`]}},
+  {t:`Soon the sprouts grew into tall yellow flowers. Grandma smiled. "You took good care of them," she said.`,q:{k:'Why',ask:`Why did the flowers grow?`,c:[`Lily took good care of them`,`Grandma bought them`,`It snowed`]}}],
+  main:{ask:`What is this story mostly about?`,c:[`A girl takes care of seeds until they grow into flowers`,`A girl visits a flower store`,`A grandma plants a tree`]},
+  order:[`Lily planted seeds in a pot.`,`Lily saw a tiny green sprout.`,`The sprouts grew into yellow flowers.`]},
+ {title:`The Big Game`,e:'⚽',pages:[
+  {t:`Sam was nervous. Today was the big soccer game, and her team, the Tigers, had never won.`,q:{k:'Feelings',ask:`How did Sam feel before the game?`,c:[`Nervous`,`Angry`,`Bored`]}},
+  {t:`In the first half, the other team scored two goals. Sam's team looked sad.`,q:{k:'What happened',ask:`What happened in the first half?`,c:[`The other team scored two goals`,`Sam scored a goal`,`It started to rain`]}},
+  {t:`Coach Ray said, "Don't give up! Pass the ball and help each other." The Tigers started to work together.`,q:{k:'Detail',ask:`What did Coach Ray tell the team?`,c:[`Don't give up`,`Go home`,`Stop playing`]}},
+  {t:`Sam passed to her friend Mia, and Mia scored! Then Sam scored too. The Tigers won three to two!`,q:{k:'Who',ask:`Who scored the first goal for the Tigers?`,c:[`Mia`,`Coach Ray`,`Sam's dad`]}}],
+  main:{ask:`What is the big idea of this story?`,c:[`The team won by working together`,`Soccer is too hard`,`Sam did not like her team`]},
+  order:[`The other team scored two goals.`,`Coach Ray told the team not to give up.`,`The Tigers won the game.`]},
+ {title:`Ollie the Owl`,e:'🦉',pages:[
+  {t:`Ollie was a little owl who lived in a tall oak tree. The other owls could fly, but Ollie was scared to try.`,q:{k:'Where',ask:`Where did Ollie live?`,c:[`In a tall oak tree`,`In a barn`,`In a pond`]}},
+  {t:`Every night, Ollie watched his sister Luna fly over the forest. "I wish I could do that," he said.`,q:{k:'Who',ask:`Who is Luna?`,c:[`Ollie's sister`,`Ollie's teacher`,`A frog`]}},
+  {t:`Luna said, "Start small. Just hop to the next branch." Ollie took a deep breath and hopped. He did it!`,q:{k:'Why',ask:`Why did Ollie hop to the next branch?`,c:[`Luna told him to start small`,`He was hungry`,`The tree was falling`]}},
+  {t:`Each night, Ollie tried a little farther. One night, he flew all the way across the forest with Luna.`,q:{k:'What happened',ask:`What happened at the end?`,c:[`Ollie flew across the forest`,`Ollie fell asleep`,`Ollie moved away`]}}],
+  main:{ask:`What lesson does this story teach?`,c:[`If you keep trying a little at a time, you can do hard things`,`Owls sleep in the day`,`Big sisters are bossy`]},
+  order:[`Ollie was scared to fly.`,`Luna told Ollie to start small.`,`Ollie flew across the forest.`]}
+];
+const BEDQ=[['Who','Who is in this part of the story?'],['What happened','What just happened on this page?'],['Why','Why do you think they did that?'],['Feelings','How does the character feel right now? How do you know?'],['Where','Where is this part of the story happening?'],['Predict','What do you think will happen next?'],['Detail','What is one important detail on this page?'],['Connect','Does this remind you of anything in your life?']];
+const ENDQ=['Tell me what happened at the beginning, the middle, and the end.','What was this story mostly about?','Who was your favorite character? Why?'];
+let R=null,bedTimer=null;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const wordsHTML=t=>t.split(/(\s+)/).map(w=>/\S/.test(w)?`<span class="w">${w}</span>`:w).join('');
+function setupQ(){R.opts=shuffle([0,1,2]);R.wrong=[];R.fb=null;R.answered=false}
+function curQ(){const s=RS[R.s];return R.stage==='main'?{k:'Big idea',...s.main}:s.pages[R.page].q}
+function qSay(){const q=curQ();return q.ask+' '+R.opts.map((i,n)=>(n===R.opts.length-1?'or ':'')+q.c[i]).join(', ')+'?'}
+const fbHTML=()=>`<div class="feedback${R.fb?' '+R.fb.cls:''}" role="status">${R.fb?R.fb.msg:''}</div>`;
+function qBox(){
+  const q=curQ(),s=RS[R.s];
+  const nextLabel=R.stage==='main'?'Put the story in order →':R.page<s.pages.length-1?'Next page →':'Finish the story →';
+  return`<div class="qbox"><span class="qtype">${q.k}</span><p class="ask">${q.ask}</p>
+  <div><button class="tool" data-act="hearq" type="button">Hear the question</button></div>
+  <div class="opts">${R.opts.map(i=>`<button class="opt${R.answered&&i===0?' right':''}${R.wrong.includes(i)?' no':''}" data-opt="${i}" type="button"${R.wrong.includes(i)||(R.answered&&i!==0)?' disabled':''}>${q.c[i]}</button>`).join('')}</div>
+  ${fbHTML()}${R.answered?`<button class="next" data-act="next" type="button">${nextLabel}</button>`:''}</div>`;
+}
+function homeHTML(){
+  return`<div class="rsec"><h2 class="rh">Story time</h2><p class="rsub">Read a short story out loud, then answer a question after each page.</p>
+  <div class="shelf">${RS.map((s,i)=>`<button class="book" data-story="${i}" type="button"><span class="bk-e" aria-hidden="true">${s.e}</span><span class="bk-t">${s.title}</span><small>${s.pages.length} pages</small></button>`).join('')}</div></div>
+  <div class="rsec"><h2 class="rh">Bedtime book</h2><p class="rsub">Reading your own book together? Use the 15-minute timer and a question card after each page.</p>
+  <button class="next" data-act="bed" type="button">Start bedtime reading</button></div>`;
+}
+function bedHTML(){
+  const card=R.end?`<div class="pcard"><span class="qtype">After the book</span>${ENDQ.map(q=>`<p>${q}</p>`).join('')}</div>`
+    :R.q?`<div class="pcard"><span class="qtype">${R.q[0]}</span><p>${R.q[1]}</p></div>`
+    :`<div class="pcard"><p>Read a page together. Then tap Next page for a question to ask.</p></div>`;
+  return`<div class="rtop"><button class="tool" data-act="home" type="button">← Reading</button><span class="tag">Bedtime book · ${R.pages} page${R.pages===1?'':'s'}</span></div>
+  <div class="rgrid"><div class="rleft"><div class="timer" id="timer">0:00</div><div class="prog"><i id="prog"></i></div><p class="tiny" id="goal">Goal: 15 minutes</p>
+  <div class="row2"><button class="next" data-act="timer" type="button">${R.running?'Pause':'Start timer'}</button><button class="opt" data-act="endbook" type="button">Finished the book</button></div></div>
+  <div class="rright">${card}<button class="next" data-act="bednext" type="button">Next page →</button></div></div>`;
+}
+function renderRead(){
+  const b=$('#readBody');
+  if(!R){b.innerHTML=homeHTML();return}
+  if(R.bed){b.innerHTML=bedHTML();updTimer();return}
+  const s=RS[R.s];
+  const top=`<div class="rtop"><button class="tool" data-act="home" type="button">← All stories</button><span class="tag">${s.e} ${s.title}</span></div>`;
+  let left='',right='';
+  if(R.stage==='read'||R.stage==='q'){
+    const p=s.pages[R.page];
+    left=`<span class="tag">Page ${R.page+1} of ${s.pages.length}</span><p class="page">${wordsHTML(p.t)}</p><div class="tools"><button class="tool" data-act="readpage" type="button">Read the page to me</button></div><p class="tiny">Stuck on a word? Tap it to hear it.</p>`;
+    right=R.stage==='read'?`<div class="qbox"><p class="ask">Read this page out loud to your grown-up.</p><button class="next" data-act="didread" type="button">I read it →</button></div>`:qBox();
+  }else if(R.stage==='main'){
+    left=`<p class="page">You finished the story! Now think about the whole thing, from beginning to end.</p>`;right=qBox();
+  }else if(R.stage==='order'){
+    left=`<p class="ask">Put the story in order. Tap what happened first.</p><div class="slots">${['Beginning','Middle','End'].map((l,i)=>`<div class="slot${R.pick[i]!=null?' filled':''}"><b>${l}</b><span>${R.pick[i]!=null?s.order[R.pick[i]]:''}</span></div>`).join('')}</div>`;
+    right=`<div class="opts">${R.oopts.filter(i=>!R.pick.includes(i)).map(i=>`<button class="opt" data-ev="${i}" type="button">${s.order[i]}</button>`).join('')}</div>${fbHTML()}${R.pick.length===3?'<button class="next" data-act="finish" type="button">Finish →</button>':''}`;
+  }else{
+    left=`<p class="rh">Great reading, ${S.name}!</p><p class="page" style="font-size:22px">You read <b>${s.title}</b> and got ${R.firstTry} of ${s.pages.length+2} right on the first try.</p>`;
+    right=`<div class="opts"><button class="next" data-act="again" type="button">Read it again</button><button class="opt" data-act="home" type="button">Pick another story</button></div>`;
+  }
+  b.innerHTML=top+`<div class="rgrid"><div class="rleft">${left}</div><div class="rright">${right}</div></div>`;
+}
+function updTimer(){
+  const el=document.getElementById('timer');if(!el||!R||!R.bed)return;
+  el.textContent=`${Math.floor(R.secs/60)}:${String(R.secs%60).padStart(2,'0')}`;
+  $('#prog').style.width=Math.min(100,R.secs/9)+'%';
+  if(R.secs>=900)$('#goal').textContent='15 minutes done. Great job!';
+}
+function tick(){if(!R||!R.bed)return stopBed();R.secs++;const d=day();d.readSecs++;if(R.secs%10===0)store.set('stats',S.stats);updTimer()}
+function stopBed(){if(bedTimer){clearInterval(bedTimer);bedTimer=null;store.set('stats',S.stats)}if(R&&R.bed)R.running=false}
+function startStory(i){stopBed();R={s:i,page:0,stage:'read',firstTry:0,pick:[]};renderRead();window.scrollTo(0,0)}
+function answer(i){
+  if(R.answered)return;
+  if(i===0){
+    R.answered=true;const first=!R.wrong.length;if(first)R.firstTry++;bump('reading',first);
+    R.fb={cls:'good',msg:pick(['Yes!','You got it!','Great thinking!','That is right!'])};speak(R.fb.msg);
+  }else{
+    R.wrong.push(i);
+    R.fb={cls:'oops',msg:R.stage==='main'?'Not quite. Think about the whole story, from start to finish.':'Not quite. Look back at the page and read it again.'};
+  }
+  renderRead();
+}
+function orderPick(i){
+  if(i===R.pick.length){
+    R.pick.push(i);R.fb=null;
+    if(R.pick.length===3){bump('reading',!R.orderMiss);if(!R.orderMiss)R.firstTry++;R.fb={cls:'good',msg:'You put the whole story in order!'}}
+  }else{R.orderMiss=true;R.fb={cls:'oops',msg:['What happened first, at the beginning?','What happened next, in the middle?','What happened last, at the end?'][R.pick.length]}}
+  renderRead();
+}
+function act(a){
+  const s=R&&!R.bed?RS[R.s]:null;
+  if(a==='home'){stopBed();R=null;renderRead();return}
+  if(a==='readpage'){speak(s.pages[R.page].t);return}
+  if(a==='didread'){R.stage='q';setupQ();renderRead();speak(qSay());return}
+  if(a==='hearq'){speak(qSay());return}
+  if(a==='next'){
+    if(R.stage==='q'){R.page++;if(R.page<s.pages.length)R.stage='read';else{R.stage='main';setupQ();renderRead();speak(qSay());return}}
+    else if(R.stage==='main'){R.stage='order';R.pick=[];R.fb=null;R.orderMiss=false;R.oopts=shuffle([0,1,2]);if(R.oopts.join()==='0,1,2')R.oopts=[2,0,1]}
+    renderRead();window.scrollTo(0,0);return}
+  if(a==='finish'){R.stage='done';renderRead();speak(`Great reading, ${S.name}!`);return}
+  if(a==='again'){startStory(R.s);return}
+  if(a==='bed'){R={bed:true,secs:0,running:false,pages:0,q:null,end:false};renderRead();return}
+  if(a==='timer'){if(R.running)stopBed();else{R.running=true;bedTimer=setInterval(tick,1000)}renderRead();return}
+  if(a==='bednext'){R.pages++;R.end=false;const last=R.q;R.q=pick(BEDQ.filter(q=>q!==last));renderRead();return}
+  if(a==='endbook'){R.end=true;stopBed();renderRead();return}
+}
+$('#readBody').addEventListener('click',e=>{
+  const w=e.target.closest('.w');
+  if(w){const t=w.textContent.replace(/[^A-Za-z'’-]/g,'');if(t)speak(t);w.classList.add('say');setTimeout(()=>w.classList.remove('say'),700);return}
+  const bk=e.target.closest('[data-story]');if(bk){startStory(+bk.dataset.story);return}
+  const op=e.target.closest('[data-opt]');if(op){if(!op.disabled)answer(+op.dataset.opt);return}
+  const ev=e.target.closest('[data-ev]');if(ev){orderPick(+ev.dataset.ev);return}
+  const a=e.target.closest('[data-act]');if(a)act(a.dataset.act);
+});
+
 /* ---------- events ---------- */
 document.addEventListener('click',()=>{interacted=true},{capture:true});
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   mode=t.dataset.mode;
   document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
-  $('#play').hidden=mode==='grown';$('#grown').hidden=mode!=='grown';
-  if(mode==='grown')renderGrown();else newProblem();
+  $('#play').hidden=mode==='grown'||mode==='read';$('#grown').hidden=mode!=='grown';$('#read').hidden=mode!=='read';
+  if(mode!=='read'){stopBed();if(R&&R.bed)R=null}
+  if(canSpeak)try{speechSynthesis.cancel()}catch(e){}
+  if(mode==='grown')renderGrown();else if(mode==='read')renderRead();else newProblem();
 }));
 $('#pad').addEventListener('click',e=>{const k=e.target.closest('.key');if(k&&!k.disabled)press(k.dataset.k)});
 $('#nextBtn').addEventListener('click',newProblem);
@@ -437,6 +724,11 @@ $('#visual').addEventListener('click',e=>{
   let sum=0;document.querySelectorAll('#visual .coin.counted').forEach(x=>sum+=+x.dataset.v);
   const tl=$('#tally');if(tl)tl.textContent=sum?`Counted so far: ${sum}¢`:'Tap coins to count them';
 });
+$('#focusSel').addEventListener('change',e=>{S.focus=e.target.value;store.set('focus',S.focus)});
+$('#dotsSel').addEventListener('change',e=>{S.dots=e.target.value;store.set('dots',S.dots)});
+$('#flashChk').addEventListener('change',e=>{S.flash=e.target.checked;store.set('flash',S.flash)});
+$('#voiceSel').addEventListener('change',e=>{voice=voices.find(v=>v.name===e.target.value)||voice;store.set('voice',voice?voice.name:'');speak(`Hi ${S.name}! Let's practice some math.`)});
+$('#voiceTest').addEventListener('click',()=>speak(`Hi ${S.name}! Emily has 8 cookies. She eats 3. How many cookies are left?`.replace('Emily',S.name)));
 $('#nameInput').addEventListener('input',e=>{S.name=e.target.value.trim()||'Emily';$('#kidName').textContent=S.name;store.set('name',S.name)});
 $('#grown').addEventListener('click',e=>{
   if(e.target.id==='resetBtn')resetArea(true);
@@ -444,7 +736,7 @@ $('#grown').addEventListener('click',e=>{
   else if(e.target.id==='yesReset'){S.trouble={};S.stats={};sessionQ.length=0;store.set('trouble',{});store.set('stats',{});resetArea(false);renderGrown();stars()}
 });
 document.addEventListener('keydown',e=>{
-  if(mode==='grown'||e.target.tagName==='INPUT')return;
+  if(mode==='grown'||mode==='read'||/^(INPUT|SELECT)$/.test(e.target.tagName))return;
   if(/^[0-9]$/.test(e.key))press(e.key);
   else if(e.key==='Backspace')press('del');
   else if(e.key==='Enter'){e.preventDefault();done?newProblem():check()}
