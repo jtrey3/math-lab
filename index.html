@@ -73,6 +73,10 @@ main{padding-block:20px 48px}
 .choose p{margin:0;font-weight:700;font-size:20px}
 .choose .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dir{border:2px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:16px;padding:14px 10px;font-weight:700;font-size:18px;min-height:64px}
+.clue{background:rgba(255,196,0,.38);color:inherit;border-radius:6px;padding:0 4px;font-weight:700}
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;font-weight:400}
+.bank div{border:2px solid var(--accent);border-radius:12px;padding:8px 10px}
+.bank b{display:block;font-family:var(--display);font-size:18px}
 .dir b{display:block;font-family:var(--display);font-size:28px;line-height:1}
 
 .visual{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;padding:14px;border-radius:16px;background:var(--bg)}
@@ -214,7 +218,7 @@ main{padding-block:20px 48px}
       <button class="tool" id="stackBtn" type="button">Side by side</button>
     </div>
     <div class="choose" id="choose" hidden>
-      <p>First: is the number getting bigger or smaller?</p>
+      <p id="chooseQ">First: is the number getting bigger or smaller?</p>
       <div class="row">
         <button class="dir" data-dir="+" type="button"><b>+</b>Bigger (add)</button>
         <button class="dir" data-dir="-" type="button"><b>−</b>Smaller (take away)</button>
@@ -416,21 +420,29 @@ function makeFact(){
 }
 const THINGS=[{n:'stickers',e:'⭐'},{n:'crayons',e:'🖍️'},{n:'apples',e:'🍎'},{n:'marbles',e:'🔵'},{n:'toy cars',e:'🚗'}];
 const STORIES=[
-  {op:'+',t:(n,a,b,x)=>`${n} has ${a} ${x.n}. Mom gives her ${b} more. How many ${x.n} does ${n} have now?`},
-  {op:'+',t:(n,a,b,x)=>`There are ${a} ${x.n} on the table. Dad puts ${b} more on the table. How many ${x.n} are on the table now?`},
-  {op:'+',x:{n:'pages',e:'📄'},t:(n,a,b)=>`${n} read ${a} pages on Monday and ${b} pages on Tuesday. How many pages did she read in all?`},
-  {op:'+',x:{n:'shells',e:'🐚'},t:(n,a,b)=>`${n} found ${a} shells at the beach. Her friend found ${b} shells. How many shells did they find together?`},
-  {op:'-',t:(n,a,b,x)=>`${n} has ${a} ${x.n}. She gives ${b} to her friend. How many ${x.n} does she have left?`},
-  {op:'-',x:{n:'cookies',e:'🍪'},t:(n,a,b)=>`There were ${a} cookies in the jar. ${n} ate ${b}. How many cookies are left in the jar?`},
-  {op:'-',x:{n:'birds',e:'🐦'},t:(n,a,b)=>`${a} birds sat in a tree. ${b} birds flew away. How many birds are still in the tree?`},
-  {op:'-',x:{n:'balloons',e:'🎈'},t:(n,a,b)=>`${n} had ${a} balloons at her party. ${b} balloons popped. How many balloons does she have now?`}
+  {op:'+',w:['gives her','more'],t:(n,a,b,x)=>`${n} has ${a} ${x.n}. Mom gives her ${b} more. How many ${x.n} does ${n} have now?`},
+  {op:'+',w:['more'],t:(n,a,b,x)=>`There are ${a} ${x.n} on the table. Dad puts ${b} more on the table. How many ${x.n} are on the table now?`},
+  {op:'+',w:['in all'],x:{n:'pages',e:'📄'},t:(n,a,b)=>`${n} read ${a} pages on Monday and ${b} pages on Tuesday. How many pages did she read in all?`},
+  {op:'+',w:['together'],x:{n:'shells',e:'🐚'},t:(n,a,b)=>`${n} found ${a} shells at the beach. Her friend found ${b} shells. How many shells did they find together?`},
+  {op:'+',w:['altogether'],x:{n:'crayons',e:'🖍️'},t:(n,a,b)=>`${n} has ${a} red crayons and ${b} blue crayons. How many crayons does she have altogether?`},
+  {op:'+',w:['come','more'],x:{n:'kids',e:'🧒'},t:(n,a,b)=>`${a} kids are at the park. Then ${b} more kids come. How many kids are at the park now?`},
+  {op:'-',w:['gives','left'],t:(n,a,b,x)=>`${n} has ${a} ${x.n}. She gives ${b} to her friend. How many ${x.n} does she have left?`},
+  {op:'-',w:['ate','left'],x:{n:'cookies',e:'🍪'},t:(n,a,b)=>`There were ${a} cookies in the jar. ${n} ate ${b}. How many cookies are left in the jar?`},
+  {op:'-',w:['still','flew away'],x:{n:'birds',e:'🐦'},t:(n,a,b)=>`${a} birds sat in a tree. ${b} birds flew away. How many birds are still in the tree?`},
+  {op:'-',w:['popped'],x:{n:'balloons',e:'🎈'},t:(n,a,b)=>`${n} had ${a} balloons at her party. ${b} balloons popped. How many balloons does she have now?`},
+  {op:'-',w:['lost'],x:{n:'stickers',e:'⭐'},t:(n,a,b)=>`${n} had ${a} stickers. She lost ${b} of them. How many stickers does she have now?`},
+  {op:'-',w:['swim away','left'],x:{n:'ducks',e:'🦆'},t:(n,a,b)=>`There are ${a} ducks in the pond. ${b} ducks swim away. How many ducks are left?`}
 ];
+const ADDW=['more','in all','together','altogether','gives her','come','join'],SUBW=['left','gave away','ate','flew away','popped','lost','fewer'];
+const hl=(t,ws)=>ws.reduce((s,w)=>s.replace(new RegExp(`\\b${w}\\b`),`<mark class="clue">${w}</mark>`),t);
 function makeStory(){
   const s=pick(STORIES),x=s.x||pick(THINGS);let a,b;
   if(s.op==='+'){a=rand(2,10);b=rand(2,Math.min(10,20-a))}else{a=rand(5,20);b=rand(2,Math.min(10,a-1))}
   const ans=s.op==='+'?a+b:a-b,text=s.t(S.name,a,b,x);
-  return{kind:'story',key:`${a}${s.op}${b}`,a,b,op:s.op,ans,x,tag:'Story problems',
-    html:`<p class="story">${text}</p><div class="ansline">Answer: <span class="answer" id="answer"></span> ${x.n}</div>`,
+  const nl=s.t(S.name,'some','some',x).replace(/(^|[.!?] )some/g,(m,p)=>p+'Some');
+  return{kind:'story',key:`${a}${s.op}${b}`,a,b,op:s.op,ans,x,w:s.w,tag:'Story problems',
+    nl:`<p class="story">${hl(nl,s.w)}</p>`,
+    html:`<p class="story">${hl(text,s.w)}</p><div class="ansline">Answer: <span class="answer" id="answer"></span> ${x.n}</div>`,
     full:`${a} ${sym(s.op)} ${b} = ${ans} ${x.n}`,say:text,
     hint:'Not yet. Count the picture, then try again.'};
 }
@@ -495,13 +507,14 @@ function newProblem(){
   P.t0=Date.now();
   phase=mode==='story'?'choose':'solve';
   $('#tag').textContent=P.tag;
-  $('#prompt').innerHTML=P.eq?eqHTML(P):P.html;
+  $('#prompt').innerHTML=P.eq?eqHTML(P):phase==='choose'?P.nl:P.html;
+  if(phase==='choose')$('#chooseQ').textContent=`No numbers yet. Just think: do the ${P.x.n} get bigger or smaller?`;
   $('#stackBtn').hidden=true;$('#stackBtn').textContent=S.stacked?'Side by side':'Stack it';
   $('#choose').hidden=phase!=='choose';
   document.querySelectorAll('.dir').forEach(b=>b.disabled=false);
   $('#visual').hidden=true;$('#visual').innerHTML='';
   if(mode==='tens')showVisual();
-  const hb=$('#hintBtn');hb.hidden=mode==='story';hb.textContent=mode==='facts'?'Show the dots':'How do I count?';
+  const hb=$('#hintBtn');hb.hidden=false;hb.textContent=mode==='facts'?'Show the dots':mode==='story'?'Clue words':'How do I count?';
   setFeedback('');$('#nextBtn').hidden=true;
   padOn(phase==='solve');renderAnswer();
 }
@@ -709,15 +722,16 @@ $('#stackBtn').addEventListener('click',()=>{
   $('#prompt').innerHTML=eqHTML(P);renderAnswer();
   $('#stackBtn').textContent=S.stacked?'Side by side':'Stack it';
 });
-$('#hintBtn').addEventListener('click',()=>{if(mode==='facts')showVisual();else setFeedback(P.hint.replace(/^Not yet\. /,''),'')});
+$('#hintBtn').addEventListener('click',()=>{if(mode==='facts')showVisual();else if(mode==='story'){const f=$('#feedback');f.className='feedback';f.innerHTML=`<div class="bank"><div><b>+ Bigger words</b>${ADDW.join(', ')}</div><div><b>− Smaller words</b>${SUBW.join(', ')}</div></div>`}else setFeedback(P.hint.replace(/^Not yet\. /,''),'')});
 document.querySelectorAll('.dir').forEach(b=>b.addEventListener('click',()=>{
   if(phase!=='choose')return;
   if(b.dataset.dir===P.op){
-    phase='solve';$('#choose').hidden=true;showVisual();padOn(true);
-    setFeedback(P.op==='+'?'Right! It gets bigger, so we add. Now solve it.':'Right! It gets smaller, so we take away. Now solve it.','good');
+    phase='solve';$('#choose').hidden=true;$('#prompt').innerHTML=P.html;renderAnswer();showVisual();padOn(true);
+    const cw=P.w[P.w.length-1];
+    setFeedback(P.op==='+'?`Right! "${cw}" means it gets bigger, so we add. Here are the numbers.`:`Right! "${cw}" means it gets smaller, so we take away. Here are the numbers.`,'good');
   }else{
     b.disabled=true;
-    setFeedback(`Think again. At the end, are there more ${P.x.n} or fewer?`,'oops');
+    setFeedback(`Think again. Look at the yellow clue word: "${P.w[P.w.length-1]}".`,'oops');
   }
 }));
 $('#visual').addEventListener('click',e=>{
