@@ -136,6 +136,32 @@ main{padding-block:20px 48px}
 .danger{border:2px solid var(--oops);color:var(--oops);background:none;border-radius:12px;padding:8px 14px;font-weight:700}
 .confirm{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .left,.right{display:flex;flex-direction:column;gap:16px;min-width:0}
+/* Test prep */
+.pv{background:var(--bg);border-radius:16px;padding:10px 12px;overflow:hidden}
+.nl{width:100%;height:auto;display:block;max-width:640px;margin:0 auto}
+.nl line{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.nl .tk{stroke:var(--line)}.nl .tk.on{stroke:var(--ink)}
+.nl text{font:700 22px var(--display);fill:var(--muted)}.nl text.on{fill:var(--ink)}
+.nl .hop{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;stroke-dasharray:600;stroke-dashoffset:600;animation:draw .6s ease-out forwards}
+.nl .hop.old{animation:none;stroke-dashoffset:0}
+.nl .hl{fill:var(--accent);font-size:24px}
+.nl .hop.back,.nl .arr.back{stroke:var(--oops)}.nl .hl.back{fill:var(--oops)}
+.nl .arr{fill:none;stroke:var(--accent);stroke-width:4;stroke-linejoin:round}
+@keyframes draw{to{stroke-dashoffset:0}}
+.cap{margin:0;font-size:20px;font-weight:700;min-height:1.4em}
+.hc{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:560px}
+.hcell{border:1px solid var(--line);background:var(--surface);border-radius:6px;font-weight:700;font-size:15px;padding:6px 0;color:var(--ink);transition:background .2s}
+.hcell.on{background:var(--sun);border-color:var(--sun-ink)}
+.hcell.cur{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);transform:scale(1.12)}
+.hcell.ans{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar2{display:grid;grid-template-columns:70px minmax(0,1fr);align-items:center;gap:10px;font-weight:700;font-size:18px}
+.bar2 i{display:block;height:34px;border-radius:8px;background:var(--accent);transition:width .6s ease-out;position:relative}
+.bar2 i.ext{background:var(--sun);color:var(--sun-ink);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:16px}
+.bar2 .b{display:flex;gap:3px}
+.brk{display:flex;flex-direction:column;gap:8px;font-size:clamp(22px,4vw,30px);font-family:var(--display);font-weight:800}
+.brk span{opacity:.25;transition:opacity .4s}.brk span.on{opacity:1}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
 /* Reading */
 .rbody{display:flex;flex-direction:column;gap:18px}
 .rsec{display:flex;flex-direction:column;gap:10px}
@@ -184,7 +210,7 @@ main{padding-block:20px 48px}
   .eq{font-size:clamp(40px,11vh,80px)}
   .story{font-size:21px;max-width:40ch}
   .bar{padding-block:8px 2px}
-  #read{padding:16px 22px}
+  #read,#prep{padding:16px 22px}
   .rgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:start}
   .tab{padding:8px 12px}
 }
@@ -202,6 +228,7 @@ main{padding-block:20px 48px}
       <button class="tab" role="tab" data-mode="story" aria-selected="false">Story problems</button>
       <button class="tab" role="tab" data-mode="tens" aria-selected="false">Tens &amp; ones</button>
       <button class="tab" role="tab" data-mode="read" aria-selected="false">Reading</button>
+      <button class="tab" role="tab" data-mode="prep" aria-selected="false">Test prep</button>
       <button class="tab" role="tab" data-mode="grown" aria-selected="false">Grown-ups</button>
     </nav>
   </div>
@@ -241,6 +268,9 @@ main{padding-block:20px 48px}
   <section class="card" id="read" hidden>
     <div id="readBody" class="rbody"></div>
   </section>
+  <section class="card" id="prep" hidden>
+    <div id="prepBody" class="rbody"></div>
+  </section>
 
   <section class="card grown" id="grown" hidden>
     <div>
@@ -275,7 +305,7 @@ main{padding-block:20px 48px}
     <div class="field">
       <label for="dotsSel">Dot help</label>
       <select id="dotsSel">
-        <option value="on">Count on: first number shown as a block (recommended)</option>
+        <option value="on">Count on / count back: big number shown as a block, no dots to count (recommended)</option>
         <option value="all">Show every dot</option>
       </select>
     </div>
@@ -384,9 +414,9 @@ function speak(t){if(!canSpeak||!S.voiceOn)return;try{speechSynthesis.cancel();c
 if(canSpeak){loadVoices();try{speechSynthesis.addEventListener('voiceschanged',loadVoices)}catch(e){}}
 
 /* ---------- stats & spaced review ---------- */
-function day(){const d=S.stats[TODAY]||(S.stats[TODAY]={facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}});if(!d.reading)d.reading={r:0,t:0};if(!d.readSecs)d.readSecs=0;return d}
+function day(){const d=S.stats[TODAY]||(S.stats[TODAY]={facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}});if(!d.reading)d.reading={r:0,t:0};if(!d.prep)d.prep={r:0,t:0};if(!d.readSecs)d.readSecs=0;return d}
 function bump(kind,right){const d=day();d[kind].t++;if(right)d[kind].r++;store.set('stats',S.stats);stars()}
-const dayStars=d=>d?d.facts.r+d.story.r+d.tens.r+(d.reading?d.reading.r:0):0;
+const dayStars=d=>d?d.facts.r+d.story.r+d.tens.r+(d.reading?d.reading.r:0)+(d.prep?d.prep.r:0):0;
 function stars(){$('#starCount').textContent=dayStars(S.stats[TODAY])}
 function markMiss(key){
   S.trouble[key]={box:0,due:Date.now()+10*60000};store.set('trouble',S.trouble);
@@ -416,7 +446,7 @@ function makeFact(){
   return{kind:'facts',key,...f,eq:true,tag:'Quick facts · '+FOCUS[S.focus],
     html:`<div class="eq"><span>${f.a}</span><span>${sym(f.op)}</span><span>${f.b}</span><span>=</span><span class="answer" id="answer"></span></div>`,
     full:`${f.a} ${sym(f.op)} ${f.b} = ${f.ans}`,say:`${f.a} ${word(f.op)} ${f.b}`,
-    hint:f.op==='+'?`Not yet. Say ${Math.max(f.a,f.b)} in your head, then count on ${Math.min(f.a,f.b)} more.`:'Not yet. Count the dots that are left, then try again.'};
+    hint:f.op==='+'?`Not yet. Say ${Math.max(f.a,f.b)} in your head, then count on ${Math.min(f.a,f.b)} more.`:(S.dots==='all'?'Not yet. Count the dots that are left, then try again.':`Not yet. Start at ${f.a} and count back ${f.b}. Or think: ${f.b} + ? = ${f.a}`)};
 }
 const THINGS=[{n:'stickers',e:'⭐'},{n:'crayons',e:'🖍️'},{n:'apples',e:'🍎'},{n:'marbles',e:'🔵'},{n:'toy cars',e:'🚗'}];
 const STORIES=[
@@ -472,7 +502,8 @@ function factVisual(p){
     const big=Math.max(p.a,p.b),small=Math.min(p.a,p.b);
     return`<div class="cgroup"><div class="block">${big}</div><small>Start here</small></div><span class="plus">+</span><div class="cgroup">${frames(Array(small).fill('b'))}<small>Count on ${small}</small></div><div class="tally" style="color:var(--muted)">Say ${big} in your head. Then count the yellow dots.</div>`;
   }
-  return`<div class="cgroup">${frames([...Array(p.a-p.b).fill('a'),...Array(p.b).fill('x')])}<small>Start with ${p.a}. Take away the ${p.b} red X's.</small></div>`;
+  if(S.dots==='all')return`<div class="cgroup">${frames([...Array(p.a-p.b).fill('a'),...Array(p.b).fill('x')])}<small>Start with ${p.a}. Take away the ${p.b} red X's.</small></div>`;
+  return`<div class="cgroup"><div class="block">${p.a}</div><small>Start here</small></div><span class="plus">−</span><div class="cgroup">${frames(Array(p.b).fill('x'))}<small>Count back ${p.b}</small></div><div class="tally" style="color:var(--muted)">Say ${p.a} in your head. Count back one for each red X: ${p.a-1}, ${p.a-2}${p.b>2?'…':''}</div>`;
 }
 function storyVisual(p){
   const e=`<span>${p.x.e}</span>`;
@@ -548,7 +579,7 @@ function press(k){
 function renderGrown(){
   $('#nameInput').value=S.name;loadVoices();
   const d=S.stats[TODAY]||{facts:{r:0,t:0},story:{r:0,t:0},tens:{r:0,t:0}};
-  const rows=[['Quick facts',d.facts],['Story problems',d.story],['Tens & ones',d.tens],['Reading questions',d.reading||{r:0,t:0}]];
+  const rows=[['Quick facts',d.facts],['Story problems',d.story],['Tens & ones',d.tens],['Reading questions',d.reading||{r:0,t:0}],['Test prep',d.prep||{r:0,t:0}]];
   $('#todayStats').innerHTML=rows.map(([l,s])=>`<span>${l}</span><span>${s.r} of ${s.t} right first try</span>`).join('')+`<span>Facts known from memory (under 4 sec, no dots)</span><span>${d.fast||0}</span><span>Bedtime reading</span><span>${Math.floor((d.readSecs||0)/60)} min</span>`;
   $('#voiceChk').checked=!!S.voiceOn;$('#focusSel').value=S.focus;$('#dotsSel').value=S.dots;$('#flashChk').checked=!!S.flash;
   const days=[];for(let i=6;i>=0;i--){const dt=new Date(Date.now()-i*DAY);const s=S.stats[dateKey(dt)];days.push({l:dt.toLocaleDateString('en-US',{weekday:'short'}),v:dayStars(s)})}
@@ -704,15 +735,130 @@ $('#readBody').addEventListener('click',e=>{
   const a=e.target.closest('[data-act]');if(a)act(a.dataset.act);
 });
 
+
+/* ---------- test prep ---------- */
+const PREP=[
+ {id:'nl',e:'🐸',t:'Hop on a number line',sub:'Jump by tens, then by ones'},
+ {id:'hc',e:'🔢',t:'Hundred chart',sub:'Down a row is +10. Right one is +1'},
+ {id:'rg',e:'🔟',t:'Need to regroup?',sub:'Do the ones make a ten?'},
+ {id:'two',e:'👣',t:'Two-step story',sub:'Do one thing at a time'},
+ {id:'miss',e:'❓',t:'Find the missing number',sub:'Count up from start to end'},
+ {id:'more',e:'📏',t:'"More than" problems',sub:'More than means add'},
+ {id:'brk',e:'🧩',t:'Break apart a number',sub:'Split the second number into tens and ones'}
+];
+const NAMES=['Kim','Gaby','Kayla','Abe','Marcy','Leo','Sam','Mia'];
+const PITEMS=[['crayons','🖍️'],['pennies','🪙'],['cards','🃏'],['seeds','🌱'],['pens','🖊️'],['stickers','⭐'],['donuts','🍩'],['marbles','🔵']];
+let Q=null;
+function numOpts(ans,wrong){const o=[ans];for(const w of wrong){if(w>0&&w<100&&!o.includes(w))o.push(w);if(o.length===4)break}let k=1;while(o.length<4){const w=ans+(k%2?k:-k);k++;if(w>0&&w<100&&!o.includes(w))o.push(w)}return shuffle(o.map(v=>({t:String(v),ok:v===ans})))}
+function nline(start,hops,shown){
+  const pts=[start];hops.forEach(h=>pts.push(pts[pts.length-1]+h.d));
+  const min=Math.min(...pts),max=Math.max(...pts),span=Math.max(max-min,25);
+  const X=v=>40+(v-min)/span*560;
+  let s=`<svg class="nl" viewBox="0 0 640 ${hops.some(h=>h.d<0)?235:150}" aria-hidden="true"><line x1="10" y1="110" x2="630" y2="110"/>`;
+  pts.forEach((v,i)=>{const on=i<=shown;s+=`<line class="tk${on?' on':''}" x1="${X(v)}" y1="100" x2="${X(v)}" y2="120"/><text class="${on?'on':''}" x="${X(v)}" y="142" text-anchor="middle">${on?v:'?'}</text>`});
+  hops.forEach((h,i)=>{if(i>=shown)return;const x1=X(pts[i]),x2=X(pts[i+1]),mx=(x1+x2)/2,ht=Math.min(72,24+Math.abs(x2-x1)*.5),back=h.d<0;
+    const bh=Math.min(40,ht),y=back?152:108,cy=back?152+bh*1.7:108-ht*1.6,ly=back?152+bh*.95+26:102-ht*.8,dir=x2>x1?1:-1;
+    s+=`<path class="hop${back?' back':''}${i<shown-1?' old':''}" d="M${x1} ${y} Q${mx} ${cy} ${x2} ${y}"/><path class="arr${back?' back':''}" d="M${x2-dir*9} ${y-(back?9:-9)} L${x2} ${y} L${x2-dir*9} ${y+(back?9:-9)}"/><text class="hl${back?' back':''}" x="${mx}" y="${ly}" text-anchor="middle">${h.l}</text>`});
+  return s+'</svg>';
+}
+const hopsFor=(b)=>{const h=[];for(let i=0;i<Math.floor(b/10);i++)h.push({d:10,l:'+10'});if(b%10)h.push({d:b%10,l:'+'+(b%10)});return h};
+function hchart(path,cur,ans){let h='<div class="hc">';for(let n=1;n<=100;n++){const c=n===ans?' ans':n===cur?' cur':path.includes(n)?' on':'';h+=`<button class="hcell${c}" data-hc="${n}" type="button">${n}</button>`}return h+'</div>'}
+function makePrep(id){
+  const n=pick(NAMES),[it,em]=pick(PITEMS),L={id,qi:0,step:0,qs:[],firstTry:true};
+  if(id==='nl'){
+    const a=rand(21,64),b=rand(1,3)*10+rand(1,9),ans=a+b,hops=hopsFor(b);
+    L.story=`${n} has ${a} ${it}. ${n} is given ${b} more ${it}. How many ${it} does ${n} have in all?`;
+    L.steps=hops.length;L.vis=k=>nline(a,hops,k);
+    L.cap=k=>k===0?`Start at ${a}. The big number goes first.`:k<=Math.floor(b/10)?`Hop +10. Now we are at ${a+10*k}. (${b} is ${Math.floor(b/10)} tens and ${b%10} ones)`:`Hop +${b%10} for the ones. We land on ${ans}.`;
+    L.qs=[{q:`How many ${it} in all?`,opts:numOpts(ans,[ans-10,ans+10,a-b,ans-1]),why:`${a} + ${b} = ${ans}. "In all" means put them together, so we add.`}];
+  }else if(id==='hc'){
+    const a=rand(21,58),b=rand(1,3)*10+rand(1,9),ans=a+b;const path=[a];for(let i=0;i<Math.floor(b/10);i++)path.push(path[path.length-1]+10);for(let i=0;i<b%10;i++)path.push(path[path.length-1]+1);
+    L.story=`${n} has ${a} ${it}. ${n} gets ${b} more ${it}. How many ${it} does ${n} have now? Tap the answer on the hundred chart.`;
+    L.steps=path.length-1;L.vis=k=>hchart(path.slice(0,k+1),path[k],L.found?ans:null);
+    L.cap=k=>k===0?`Find ${a} on the chart.`:k<=Math.floor(b/10)?`Go DOWN one row. That is +10. Now at ${path[k]}.`:`Go RIGHT one. That is +1. Now at ${path[k]}.`;
+    L.tap=true;L.qs=[{q:`Tap ${n}'s answer on the chart.`,opts:[],ans,why:`${a} + ${b} = ${ans}. Down ${Math.floor(b/10)} rows for the tens, right ${b%10} for the ones.`}];
+  }else if(id==='rg'){
+    const oa=rand(2,9),ob=Math.random()<.5?rand(10-oa,9):rand(1,9-oa),a=rand(1,5)*10+oa,b=rand(1,3)*10+ob,yes=oa+ob>=10;
+    L.story=`Look at ${a} + ${b}. Will it need regrouping? Only the ONES decide.`;
+    L.steps=2;
+    L.vis=k=>k===0?`<div class="brk"><span class="on">${a} + ${b}</span><span>ones: ${oa} and ${ob}</span></div>`:k===1?`<div class="visual" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><div class="cgroup">${frames(Array(oa).fill('a'))}<small>${oa} ones</small></div><span class="plus">+</span><div class="cgroup">${frames(Array(ob).fill('b'))}<small>${ob} ones</small></div></div>`:`<div class="visual" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><div class="cgroup">${frames([...Array(oa).fill('a'),...Array(ob).fill('b')])}<small>${oa} + ${ob} = ${oa+ob} ones</small></div></div>`;
+    L.cap=k=>k===0?`Cover the tens. Just look at the ones: ${oa} and ${ob}.`:k===1?`Put the ones in ten-frames.`:yes?`The frame is FULL and spills over. ${oa+ob} ones make a ten. Yes, regroup!`:`The frame is not full. ${oa+ob} ones is less than 10. No regrouping.`;
+    L.qs=[{q:`Does ${a} + ${b} need regrouping?`,opts:shuffle([{t:'Yes, the ones make a ten',ok:yes},{t:'No, the ones stay under 10',ok:!yes}]),why:`${oa} + ${ob} = ${oa+ob}. ${yes?'That is 10 or more, so a new ten is made.':'That is less than 10, so nothing carries over.'}`}];
+  }else if(id==='two'){
+    const a=rand(30,70),c1=rand(5,15),c2=pick([3,4,5,6,7,8,9].filter(v=>Math.abs(v-c1)>=2)),m=a-c1,ans=m+c2,hops=[{d:-c1,l:'−'+c1},{d:c2,l:'+'+c2}];
+    L.story=`${n} has ${a} ${it}. ${n} gives away ${c1} ${it}. Then ${n} buys ${c2} more ${it}. How many ${it} does ${n} have now?`;
+    L.steps=2;L.vis=k=>nline(a,hops,k);
+    L.cap=k=>k===0?`Start at ${a}. Two things happen. Do them one at a time.`:k===1?`"Gives away" means smaller. Hop back ${c1}. Now at ${m}.`:`"Buys more" means bigger. Hop forward ${c2}. We land on ${ans}.`;
+    L.qs=[{q:'Step 1: what happens first?',opts:shuffle([{t:`${a} − ${c1} = ${m}`,ok:true},{t:`${a} + ${c1} = ${a+c1}`,ok:false},{t:`${a} − ${c2} = ${a-c2}`,ok:false}]),why:`First ${n} gives away ${c1}, so ${a} − ${c1} = ${m}.`},
+         {q:'Step 2: what happens next?',opts:shuffle([{t:`${m} + ${c2} = ${ans}`,ok:true},{t:`${m} − ${c2} = ${m-c2}`,ok:false},{t:`${a} + ${c2} = ${a+c2}`,ok:false}]),why:`Then ${n} buys ${c2} more. Start from ${m}, not ${a}. ${m} + ${c2} = ${ans}.`},
+         {q:`So how many ${it} now?`,opts:numOpts(ans,[m,a+c2,m-c2]),why:`${n} has ${ans} ${it}.`}];
+  }else if(id==='miss'){
+    const a=rand(21,50),b=rand(1,4)*10+rand(0,9),t=a+b,hops=hopsFor(b);
+    L.story=`${n} has ${a} ${it}. ${n} buys some more ${it}. Now ${n} has ${t} ${it}. How many ${it} did ${n} buy?`;
+    L.steps=hops.length;L.vis=k=>nline(a,hops,k);
+    L.cap=k=>k===0?`We know the START (${a}) and the END (${t}). The middle is missing. Count up!`:k<hops.length?`Hop +10. Now at ${a+10*k}. Keep going until ${t}.`:`We reached ${t}. We hopped ${b} in all. That is how many ${n} bought.`;
+    L.qs=[{q:'Which equation matches the story?',opts:shuffle([{t:`${a} + ? = ${t}`,ok:true},{t:`${a} − ? = ${t}`,ok:false},{t:`${t} + ${a} = ?`,ok:false},{t:`? − ${a} = ${t}`,ok:false}]),why:`Start with ${a}, add the mystery number, end with ${t}. So ${a} + ? = ${t}.`},
+         {q:`How many ${it} did ${n} buy?`,opts:numOpts(b,[t,a,b+10,b-10]),why:`Count up from ${a} to ${t}: that is ${b}.`}];
+  }else if(id==='more'){
+    const a=rand(20,45),d=rand(21,50),ans=a+d,n2=pick(NAMES.filter(x=>x!==n));
+    L.story=`${n} has ${a} ${it}. ${n2} has ${d} more ${it} than ${n}. How many ${it} does ${n2} have?`;
+    L.steps=2;const W=v=>Math.round(v/ans*100);
+    L.vis=k=>`<div class="bars"><div class="bar2"><span>${n}</span><div class="b"><i style="width:${W(a)}%"></i><span>${a}</span></div></div>${k>=1?`<div class="bar2"><span>${n2}</span><div class="b"><i style="width:${W(a)}%"></i>${k>=2?`<i class="ext" style="width:${W(d)}%">+${d} more</i><span>${ans}</span>`:'<span>?</span>'}</div></div>`:''}</div>`;
+    L.cap=k=>k===0?`${n} has ${a}. Draw that bar.`:k===1?`${n2} has the SAME as ${n}... plus more. Start with ${n}'s bar.`:`Add ${d} more on the end. "More than" means ADD. ${a} + ${d} = ${ans}.`;
+    L.qs=[{q:`How many ${it} does ${n2} have?`,opts:numOpts(ans,[Math.abs(d-a),d,a,ans+10]),why:`"${d} more than ${n}" means ${n}'s ${a} and ${d} more. ${a} + ${d} = ${ans}. The word "more" is NOT asking you to subtract.`}];
+  }else{
+    const a=rand(12,40),bt=rand(1,5)*10,bo=rand(1,9),b=bt+bo,m=a+bt,ans=m+bo;
+    L.story=`Break apart the second number to solve ${a} + ${b}.`;
+    L.steps=3;
+    L.vis=k=>`<div class="brk"><span class="${k>=0?'on':''}">${a} + ${b}</span><span class="${k>=1?'on':''}">${b} = ${bt} + ${bo}</span><span class="${k>=2?'on':''}">${a} + ${bt} = ${m}</span><span class="${k>=3?'on':''}">${m} + ${bo} = ${ans}</span></div>`;
+    L.cap=k=>k===0?`${b} is hard to add all at once. Break it apart.`:k===1?`${b} is ${bt} and ${bo}. Tens and ones.`:k===2?`Add the tens first: ${a} + ${bt} = ${m}.`:`Now the ones: ${m} + ${bo} = ${ans}. Done!`;
+    L.qs=[{q:`Which shows how to break apart ${b}?`,opts:shuffle([{t:`${a} + ${bt} = ${m}, then ${m} + ${bo} = ${ans}`,ok:true},{t:`${a} + 10 = ${a+10}, then ${a+10} + ${bo} = ${a+10+bo}`,ok:false},{t:`${a} + ${bt} = ${m}, then ${m} + ${bo-1} = ${ans-1}`,ok:false}]),why:`${b} = ${bt} + ${bo}. Add the ${bt}, then the ${bo}. The tens and ones must match the number you broke apart.`}];
+  }
+  return L;
+}
+function renderPrep(){
+  const body=$('#prepBody');
+  if(!Q){body.innerHTML=`<div class="rsec"><h2 class="rh">Test prep</h2><p class="rsub">The same kinds of problems that are on the test review. Tap a skill. Use "Show me" to watch it step by step.</p>
+  <div class="chips">${PREP.map(p=>`<button class="book" data-pp="${p.id}" type="button"><span class="bk-e" aria-hidden="true">${p.e}</span><span class="bk-t">${p.t}</span><small>${p.sub}</small></button>`).join('')}</div></div>`;return}
+  const L=Q,P2=PREP.find(p=>p.id===L.id),q=L.qs[L.qi],doneAll=L.qi>=L.qs.length;
+  const left=`<div class="rtop"><h2 class="rh">${P2.e} ${P2.t}</h2><button class="tool" data-pa="home" type="button">All skills</button></div>
+    <p class="page" style="font-size:22px">${L.story}</p>
+    <div class="pv">${L.vis(L.step)}</div>
+    <p class="cap">${L.cap(L.step)}</p>
+    ${L.step<L.steps?`<button class="next" data-pa="step" type="button">${L.step===0?'Show me':'Next step'} →</button>`:`<button class="tool" data-pa="replay" type="button">Watch it again</button>`}`;
+  let right='';
+  if(doneAll)right=`<div class="feedback good">${L.fb||''}</div><div class="opts"><button class="next" data-pa="again" type="button">Another one like this →</button><button class="opt" data-pa="home" type="button">All skills</button></div>`;
+  else right=`<div class="qbox"><span class="qtype">Question ${L.qi+1} of ${L.qs.length}</span><p class="ask">${q.q}</p>
+    <div class="opts">${q.opts.map((o,i)=>`<button class="opt${L.no&&L.no.includes(i)?' no':''}${L.hit===i?' right':''}" data-po="${i}" type="button" ${L.no&&L.no.includes(i)||L.hit!=null?'disabled':''}>${o.t}</button>`).join('')}</div>
+    <div class="feedback${L.fb?(L.hit!=null||L.found?' good':' oops'):''}">${L.fb||''}</div>
+    ${L.hit!=null||L.found?`<button class="next" data-pa="nextq" type="button">${L.qi+1<L.qs.length?'Next question →':'Finish →'}</button>`:''}</div>`;
+  body.innerHTML=`<div class="rgrid"><div class="rleft">${left}</div><div class="rright">${right}</div></div>`;
+}
+function prepRight(){Q.fb=Q.qs[Q.qi].why;bump('prep',Q.firstTry);Q.firstTry=true;Q.step=Q.steps}
+$('#prepBody').addEventListener('click',e=>{
+  const pp=e.target.closest('[data-pp]');if(pp){Q=makePrep(pp.dataset.pp);renderPrep();window.scrollTo(0,0);return}
+  const cell=e.target.closest('[data-hc]');
+  if(cell&&Q&&Q.tap&&!Q.found){const n=+cell.dataset.hc;if(n===Q.qs[0].ans){Q.found=true;prepRight()}else{Q.firstTry=false;Q.fb=n<Q.qs[0].ans?`${n} is too small. Keep going.`:`${n} is too big. Go back.`}renderPrep();return}
+  const po=e.target.closest('[data-po]');
+  if(po&&Q&&Q.hit==null){const i=+po.dataset.po;if(Q.qs[Q.qi].opts[i].ok){Q.hit=i;prepRight()}else{Q.no=(Q.no||[]).concat(i);Q.firstTry=false;Q.fb='Not that one. Tap "Show me" and watch the steps.'}renderPrep();return}
+  const a=e.target.closest('[data-pa]');if(!a||!Q)return;const k=a.dataset.pa;
+  if(k==='home'){Q=null}
+  else if(k==='step'){Q.step++}
+  else if(k==='replay'){Q.step=0}
+  else if(k==='nextq'){Q.qi++;Q.hit=null;Q.no=[];Q.fb=Q.qi>=Q.qs.length?'You finished all the steps!':'';Q.firstTry=true}
+  else if(k==='again'){Q=makePrep(Q.id)}
+  renderPrep();
+});
+
 /* ---------- events ---------- */
 document.addEventListener('click',()=>{interacted=true},{capture:true});
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   mode=t.dataset.mode;
   document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
-  $('#play').hidden=mode==='grown'||mode==='read';$('#grown').hidden=mode!=='grown';$('#read').hidden=mode!=='read';
+  $('#play').hidden=mode==='grown'||mode==='read'||mode==='prep';$('#grown').hidden=mode!=='grown';$('#read').hidden=mode!=='read';$('#prep').hidden=mode!=='prep';
   if(mode!=='read'){stopBed();if(R&&R.bed)R=null}
   if(canSpeak)try{speechSynthesis.cancel()}catch(e){}
-  if(mode==='grown')renderGrown();else if(mode==='read')renderRead();else newProblem();
+  if(mode==='grown')renderGrown();else if(mode==='read')renderRead();else if(mode==='prep')renderPrep();else newProblem();
 }));
 $('#pad').addEventListener('click',e=>{const k=e.target.closest('.key');if(k&&!k.disabled)press(k.dataset.k)});
 $('#nextBtn').addEventListener('click',newProblem);
@@ -753,7 +899,7 @@ $('#grown').addEventListener('click',e=>{
   else if(e.target.id==='yesReset'){S.trouble={};S.stats={};sessionQ.length=0;store.set('trouble',{});store.set('stats',{});resetArea(false);renderGrown();stars()}
 });
 document.addEventListener('keydown',e=>{
-  if(mode==='grown'||mode==='read'||/^(INPUT|SELECT)$/.test(e.target.tagName))return;
+  if(mode==='grown'||mode==='read'||mode==='prep'||/^(INPUT|SELECT)$/.test(e.target.tagName))return;
   if(/^[0-9]$/.test(e.key))press(e.key);
   else if(e.key==='Backspace')press('del');
   else if(e.key==='Enter'){e.preventDefault();done?newProblem():check()}
